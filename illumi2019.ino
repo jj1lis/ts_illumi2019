@@ -95,7 +95,7 @@ void setup(){
     pinMode(16,INPUT);          //マジックナンバーじゃなくてちゃんとつける
     light=new Light(EEPROM.read(ADDR_MODE));    //Lightのコンストラクタ呼び出し
                                                 //ここでモード設定
-    cycle_latest=cycle_now=false                //初期状態はfalse(前半)
+    cycle_latest=cycle_now=false;               //初期状態はfalse(前半)
     light.flash(cycle_now);                     //出力ピンの初期状態をセット
 }
 
