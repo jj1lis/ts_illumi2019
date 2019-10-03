@@ -6,6 +6,7 @@ const unsigned int FLASH_CYCLE=2000   //flash cycle(milli second)
 const byte OUT_MIN=2;
 const byte OUT_MAX=13;
 const byte SW_MODE=//15? 16?
+const byte //TODO
 
 typedef enum{
     xmas=0,     //Fu*k X'mas
