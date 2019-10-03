@@ -85,6 +85,7 @@ class Light{                    //点灯関係のclass
 }
 
 Light light;    //適当にグローバルでオブジェクトだけ作っておく
+bool cycle_now,cycle_latest;
 
 void setup(){
     for(int cnt=OUT_MIN; cnt<=OUT_MAX; cnt++){
@@ -94,6 +95,8 @@ void setup(){
     pinMode(16,INPUT);          //マジックナンバーじゃなくてちゃんとつける
     light=new Light(EEPROM.read(ADDR_MODE));    //Lightのコンストラクタ呼び出し
                                                 //ここでモード設定
+    cycle_latest=cycle_now=false                //初期状態はfalse(前半)
+    light.flash(cycle_now);                     //出力ピンの初期状態をセット
 }
 
 void loop(){
@@ -108,9 +111,13 @@ void loop(){
         }
 
         if(millis()%FLASH_CYCLE<=FLASH_CYCLE/2){//ループを見る。周期の半分以下なら
-            light.flash(true);                  //out_statusをtrueの方にする
+            cycle_now=false;                    //現在はfalse
         }else{
-            light.flash(false);                 //もう半分はfalseの方にする
+            cycle_now=true;                     //もう半分はtrue
+        }
+        if(cycle_now!=cycle_latest){            //現在の状態が前回の切替と違ったら
+            light.flash(cycle_now);             //出力ピンを現在の状態に更新
+            cycle_latest=cycle_now;             //直前の変更を現在にする
         }
 
         for(byte pwm_count=0;pwm_count<=255;pwm_count++){   //PWM用ループ
