@@ -72,7 +72,7 @@ class Light{                    //点灯関係のclass
          */
 
         void pwmUpdate(byte pwm_cnt){   //PWM用の関数。やってることは見たまんま
-            if(pwm_cnt<DUTY_RATIO){
+            if(pwm_cnt>DUTY_RATIO){
                 for(byte pin=OUT_MIN; pin<=OUT_MAX; pin++){
                     digitalWrite(pin, LOW);
                 }
