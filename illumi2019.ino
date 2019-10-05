@@ -5,8 +5,18 @@ const byte DUTY_RATIO=255;          //PWMのDuty比。0-255の間で設定
 const unsigned int FLASH_CYCLE=2000;//点滅周期(ミリ秒)
 const byte OUT_MIN=2;               //出力ピンの一番下
 const byte OUT_MAX=13;              //出力ピンの一番上
-const byte SW_MODE=                 //TODO モード切替スイッチのピンがわからん。15? 16?
-const byte                          //TODO もう一つの謎入力。要調査
+const byte SW_MODE=15;              //TODO モード切替スイッチのピン。15? 16?
+const byte SW_MYST=16;              //TODO もう一つの謎入力。要調査
+
+//出力ピンのテーブルたち。定数だがポインタ参照がなぜかできないので、危ないけど変数
+//ここから下、お触り厳禁！！！！！
+bool XMAS_FIRST[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
+bool XMAS_LATTER[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
+bool MOCHI_FIRST[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
+bool MOCHI_LATTER[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
+bool ONI_FIRST[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
+bool ONI_LATTER[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
+//お触り厳禁ここまで
 
 typedef enum{   //モードの列挙型。intで管理するより契約的
     xmas=0,     //Fu*k X'mas
@@ -20,31 +30,31 @@ void resetSoftware(){       //処理を強制終了して再起動
 }
 
 class Light{                    //点灯関係のclass
-    private:                    //直接触れないようにカプセル化
+    private:                    //直接触れないようにprivateに
         Mode mode;              //Mode型。現在のモード
-        bool flash_pins[2][12]; //点滅パターンでのピンの光らせ方テーブル
-        //要素0-11の対応が2-13ピンなので注意
+        bool *flash_pins[2];    //点滅パターンでのピン光らせ方テーブル(ポインタ配列)
         bool *out_status;       //出力データ。flash_pinsをそのままポインタ参照
 
     public:                     //外から触れるpublicメンバ
-        Light(Mode read_mode)   //コンストラクタ。モードを設定
-            mode=read_mode;     
-        switch(read_mode){
-            case xmas:
-                flash_pins[false]=//TODO {HIGH,HIGH...};
-                flash_pins[true]=//TODO
+        Light(byte read_mode){      //コンストラクタ。モードを設定
+            mode=(Mode)read_mode;   //この辺くさい。byteからModeがどうcastされるか...
+            switch(read_mode){
+                case xmas:
+                    flash_pins[false]=XMAS_FIRST;
+                    flash_pins[true]=XMAS_LATTER;
                     break;
-            case mochi:
-                flash_pins[false]=//TODO
-                    flash_pins[true]=//TODO
+                case mochi:
+                    flash_pins[false]=MOCHI_FIRST;
+                    flash_pins[true]=MOCHI_LATTER;
                     break;
-            case oni:
-                flash_pins[false]=//
-                    flash_pins[true]=//TODO
+                case oni:
+                    flash_pins[false]=ONI_FIRST;
+                    flash_pins[true]=ONI_LATTER;
                     break;
-            default:        //Modeの内容に合致しなかったらxmasにして再起動
-                EEPROM.write(ADDR_MODE,(byte)Mode.xmas);
-                resetSoftware();
+                default:            //Modeの内容に合致しなかったらxmasにして再起動
+                    EEPROM.write(ADDR_MODE,(byte)xmas);
+                    resetSoftware();
+            }
         }
 
 
@@ -52,12 +62,12 @@ class Light{                    //点灯関係のclass
             return mode;
         }
 
-        void flash(bool flash_status){  
+        void flash(bool flash_status){
             //出力データをテーブルから引っ張る。点滅は２パターンなので、
             //安全性を考えてboolで指定させることにした(flash_status)
             //C/C++のboolは内部的にはfalseが0、trueはそれ以外だが、ほとんどの
             //処理系では1なので、そのまま配列要素に突っ込む
-        
+
             out_status=flash_pins[flash_status];
             //out_statusの参照をflash_statusのtrue/falseの先頭ポインタにする
         }
@@ -82,10 +92,8 @@ class Light{                    //点灯関係のclass
                 }
             }
         }
-}
+};
 
-Light light;    //適当にグローバルでオブジェクトだけ作っておく
-bool cycle_now,cycle_latest;
 
 void setup(){
     for(int cnt=OUT_MIN; cnt<=OUT_MAX; cnt++){
@@ -93,17 +101,23 @@ void setup(){
     }
     pinMode(15,INPUT);          //謎のピン達の設定。役目と定数名がわかったら
     pinMode(16,INPUT);          //マジックナンバーじゃなくてちゃんとつける
-    light=new Light(EEPROM.read(ADDR_MODE));    //Lightのコンストラクタ呼び出し
-                                                //ここでモード設定
-    cycle_latest=cycle_now=false;               //初期状態はfalse(前半)
-    light.flash(cycle_now);                     //出力ピンの初期状態をセット
 }
 
 void loop(){
-    while(1){   //void loop()は怖いので保険でwhileループ
+    //グローバルで作ったLightのオブジェクトをsetupで初期化しようとしたら
+    //エラー吐いたので、泣く泣くこっちに引っ越し
+    //loop直後一回読んだ後はwhile(1)内をグルグルするので、実質的に
+    //setupをloopスコープ内に実装できる。
+    //契約的な問題で、ピンの設定等はsetup、それ以外はloopに書いた。
+    bool cycle_now,cycle_latest;
+    cycle_latest=cycle_now=false;               //初期状態はfalse(前半)
+    Light light(EEPROM.read(ADDR_MODE));    //Lightのコンストラクタ呼び出し
+    light.flash(cycle_now);                     //出力ピンの初期状態をセット
+
+    while(1){  //実質的なloop 
         if(digitalRead(SW_MODE)==HIGH){     //モード切替のハンドラ
             while(digitalRead(SW_MODE)==HIGH){  //押しっぱ防止
-                if(digitalRead(SE_MODE)==LOW){  //手を離したらモード更新
+                if(digitalRead(SW_MODE)==LOW){  //手を離したらモード更新
                     EEPROM.write(ADDR_MODE,light.getMode()+1);  //モードを一個進める
                     resetSoftware();    //再起動
                 }
