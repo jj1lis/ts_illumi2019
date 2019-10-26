@@ -10,14 +10,13 @@ const byte SW_MYST=16;              //TODO もう一つの謎入力。要調査
 
 //出力ピンのテーブルたち。定数だがポインタ参照がなぜかできないので、危ないけど変数
 //ここから下、お触り厳禁！！！！！
-bool XMAS_FIRST[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
-bool XMAS_LATTER[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
-bool MOCHI_FIRST[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
-bool MOCHI_LATTER[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
-bool ONI_FIRST[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
-bool ONI_LATTER[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
+const bool XMAS_FIRST[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
+const bool XMAS_LATTER[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
+const bool MOCHI_FIRST[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
+const bool MOCHI_LATTER[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
+const bool ONI_FIRST[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
+const bool ONI_LATTER[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
 //お触り厳禁ここまで
-
 typedef enum{   //モードの列挙型。intで管理するより契約的
     xmas=0,     //Fu*k X'mas
     mochi=1,    //お正月
@@ -32,8 +31,8 @@ void resetSoftware(){       //処理を強制終了して再起動
 class Light{                    //点灯関係のclass
     private:                    //直接触れないようにprivateに
         Mode mode;              //Mode型。現在のモード
-        bool *flash_pins[2];    //点滅パターンでのピン光らせ方テーブル(ポインタ配列)
-        bool *out_status;       //出力データ。flash_pinsをそのままポインタ参照
+        const bool *flash_pins[2];    //点滅パターンでのピン光らせ方テーブル(ポインタ配列)
+        const bool *out_status;       //出力データ。flash_pinsをそのままポインタ参照
 
     public:                     //外から触れるpublicメンバ
         Light(byte read_mode){      //コンストラクタ。モードを設定
