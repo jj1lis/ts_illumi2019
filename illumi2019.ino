@@ -2,20 +2,29 @@
 
 const int ADDR_MODE=0;              //EEPROMに書き込むモード用変数のアドレス
 const byte DUTY_RATIO=255;          //PWMのDuty比。0-255の間で設定
-const unsigned int FLASH_CYCLE=2000;//点滅周期(ミリ秒)
+const unsigned int FLASH_INTERVAL=500;//点滅間隔(ミリ秒)
 const byte OUT_MIN=2;               //出力ピンの一番下
 const byte OUT_MAX=13;              //出力ピンの一番上
 const byte SW_MODE=15;              //TODO モード切替スイッチのピン。15? 16?
 const byte SW_MYST=16;              //TODO もう一つの謎入力。要調査
 
+const byte PATTERN_XMAS=3;              //Pattern:パターン数
+const byte PATTERN_MOCHI=3;
+const byte PATTERN_ONI=3;
+
 //出力ピンのテーブルたち。定数だがポインタ参照がなぜかできないので、危ないけど変数
 //ここから下、お触り厳禁！！！！！
-bool XMAS_FIRST[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
-bool XMAS_LATTER[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
-bool MOCHI_FIRST[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
-bool MOCHI_LATTER[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
-bool ONI_FIRST[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
-bool ONI_LATTER[12]={LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
+bool XMAS[PATTERN_XMAS][12]={{LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW},
+                        {LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW},
+                        {LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW}};
+
+bool MOCHI[PATTERN_MOCHI][12]={{LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW},
+                        {LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW},
+                        {LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW}};
+
+bool ONI[PATTERN_ONI][12]={{LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW},
+                        {LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW},
+                        {LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW}};
 //お触り厳禁ここまで
 
 typedef enum{   //モードの列挙型。intで管理するより契約的
@@ -32,24 +41,25 @@ void resetSoftware(){       //処理を強制終了して再起動
 class Light{                    //点灯関係のclass
     private:                    //直接触れないようにprivateに
         Mode mode;              //Mode型。現在のモード
-        bool *flash_pins[2];    //点滅パターンでのピン光らせ方テーブル(ポインタ配列)
+        bool *flash_pins;    //点滅パターンでのピン光らせ方テーブル(ポインタ配列)
         bool *out_status;       //出力データ。flash_pinsをそのままポインタ参照
+        byte pattern_num;            //パターン数
 
     public:                     //外から触れるpublicメンバ
         Light(byte read_mode){      //コンストラクタ。モードを設定
             mode=(Mode)read_mode;   //この辺くさい。byteからModeがどうcastされるか...
             switch(read_mode){
                 case xmas:
-                    flash_pins[false]=XMAS_FIRST;
-                    flash_pins[true]=XMAS_LATTER;
+                    flash_pins=XMAS;
+                    pattern_num=PATTERN_XMAS;
                     break;
                 case mochi:
-                    flash_pins[false]=MOCHI_FIRST;
-                    flash_pins[true]=MOCHI_LATTER;
+                    flash_pins=MOCHI;
+                    pattern_num=PATTERN_MOCHI;
                     break;
                 case oni:
-                    flash_pins[false]=ONI_FIRST;
-                    flash_pins[true]=ONI_LATTER;
+                    flash_pins=ONI;
+                    pattern_num=PATTERN_ONI;
                     break;
                 default:            //Modeの内容に合致しなかったらxmasにして再起動
                     EEPROM.write(ADDR_MODE,(byte)xmas);
@@ -62,12 +72,12 @@ class Light{                    //点灯関係のclass
             return mode;
         }
 
-        void flash(bool flash_status){
-            //出力データをテーブルから引っ張る。点滅は２パターンなので、
-            //安全性を考えてboolで指定させることにした(flash_status)
-            //C/C++のboolは内部的にはfalseが0、trueはそれ以外だが、ほとんどの
-            //処理系では1なので、そのまま配列要素に突っ込む
+        byte getPatternNum(){
+            return pattern_num;
+        }
 
+        void flash(int flash_status){
+            //flash_status<PATTERN_XXX
             out_status=flash_pins[flash_status];
             //out_statusの参照をflash_statusのtrue/falseの先頭ポインタにする
         }
@@ -94,6 +104,25 @@ class Light{                    //点灯関係のclass
         }
 };
 
+void cycleUpdate(byte *now,byte *latest,unsigned long *millis_latest,byte patterns){
+    byte millis_now=(byte)(millis()%patterns);
+    if(*millis_latest>millis_now){
+        if(*now==0){
+            *now++;
+            *latest--;
+        }else if(*now==patterns-1){
+            *now--;
+            *latest++;
+        }else if(*now>*latest){
+            *now++;
+            *latest++;
+        }else if(*now<*latest){
+            *now--;
+            *latest--;
+        }
+    }
+    *millis_latest=millis_now;
+}
 
 void setup(){
     for(int cnt=OUT_MIN; cnt<=OUT_MAX; cnt++){
@@ -109,10 +138,17 @@ void loop(){
     //loop直後一回読んだ後はwhile(1)内をグルグルするので、実質的に
     //setupをloopスコープ内に実装できる。
     //契約的な問題で、ピンの設定等はsetup、それ以外はloopに書いた。
-    bool cycle_now,cycle_latest;
-    cycle_latest=cycle_now=false;               //初期状態はfalse(前半)
+
+    byte cycle_now=0;
+    byte cycle_latest=1;
+
     Light light(EEPROM.read(ADDR_MODE));    //Lightのコンストラクタ呼び出し
     light.flash(cycle_now);                     //出力ピンの初期状態をセット
+    if(light.getPatternNum()<2){
+        resetSoftware();                    //パターン数が2より小さいと成り立たない(そもそも点滅じゃない)のでリセット
+    }
+
+    byte millis_latest=(byte)(millis()%light.getPatternNum());
 
     while(1){  //実質的なloop 
         if(digitalRead(SW_MODE)==HIGH){     //モード切替のハンドラ
@@ -124,15 +160,7 @@ void loop(){
             }
         }
 
-        if(millis()%FLASH_CYCLE<=FLASH_CYCLE/2){//ループを見る。周期の半分以下なら
-            cycle_now=false;                    //現在はfalse
-        }else{
-            cycle_now=true;                     //もう半分はtrue
-        }
-        if(cycle_now!=cycle_latest){            //現在の状態が前回の切替と違ったら
-            light.flash(cycle_now);             //出力ピンを現在の状態に更新
-            cycle_latest=cycle_now;             //直前の変更を現在にする
-        }
+        cycleUpdate(&cycle_now,&cycle_latest,&millis_latest,light.getPatternNum());
 
         for(byte pwm_count=0;pwm_count<=255;pwm_count++){   //PWM用ループ
             light.pwmUpdate(pwm_count);                     //pwm用に更新
