@@ -17,7 +17,6 @@ const byte PATTERN_ONI=3;
 const bool GRADATION_FLAG=true;
 
 //出力ピンのテーブルたち。定数だがポインタ参照がなぜかできないので、危ないけど変数
-//ここから下、お触り厳禁！！！！！
 bool XMAS[PATTERN_XMAS][12]={
     {LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW},
     {LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW},
@@ -35,7 +34,7 @@ bool ONI[PATTERN_ONI][12]={
     {LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW},
     {LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW}
 };
-//お触り厳禁ここまで
+//テーブルここまで
 
 typedef enum{   //モードの列挙型。intで管理するより契約的
     xmas=0,     //Fu*k X'mas
