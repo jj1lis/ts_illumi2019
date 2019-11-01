@@ -1,20 +1,26 @@
-#include <EEPROM.h>
+/************************************************************/
+//イルミの挙動を変える時は、ここから下を調整してください
 
-const int ADDR_MODE=0;              //EEPROMに書き込むモード用変数のアドレス
-const byte DUTY_DEFAULT=255;        //PWMのDuty比。0-255の間で設定
-const unsigned int FLASH_INTERVAL=500;      //点滅間隔(ミリ秒)
-const unsigned int GRADATION_CYCLE=4000;    //グラデーションの周期
-const byte DUTY_MIN_GRADATION=50;   //グラデーションで一番暗くなる時のDuty比
-const byte OUT_MIN=2;               //出力ピンの一番下
-const byte OUT_MAX=13;              //出力ピンの一番上
-const byte SW_MODE=15;              //モード切替スイッチのピン。15? 16?
-const byte SW_MYST=16;              //TODO もう一つの謎入力。要調査
+//PWMのデフォルトDuty比。0-255の間で設定
+const byte DUTY_DEFAULT=255;
 
-const byte PATTERN_XMAS=3;              //Pattern:パターン数
+//点滅間隔(ミリ秒)
+const unsigned int FLASH_INTERVAL=500;
+
+//グラデーションの周期
+const unsigned int GRADATION_CYCLE=4000;
+
+//グラデーションで一番暗くなる時のDuty比。
+//DUTY_DEFAULTより必ず小さくなるように！
+const byte DUTY_MIN_GRADATION=50;   
+
+//グラデーション機能を使うかのフラグ。falseで無効
+const bool GRADATION_FLAG=true;
+
+//Pattern:パターン数
+const byte PATTERN_XMAS=3;
 const byte PATTERN_MOCHI=3;
 const byte PATTERN_ONI=3;
-
-const bool GRADATION_FLAG=true;
 
 //出力ピンのテーブルたち。定数だがポインタ参照がなぜかできないので、危ないけど変数
 bool XMAS[PATTERN_XMAS][12]={
@@ -35,6 +41,18 @@ bool ONI[PATTERN_ONI][12]={
     {LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW}
 };
 //テーブルここまで
+
+//調整部分ここまで
+/***************************************************************/
+//以下コード部:絶対にいじらない
+
+#include <EEPROM.h>
+const int ADDR_MODE=0;              //EEPROMに書き込むモード用変数のアドレス
+const byte OUT_MIN=2;               //出力ピンの一番下
+const byte OUT_MAX=13;              //出力ピンの一番上
+const byte SW_MODE=15;              //モード切替スイッチのピン。15? 16?
+const byte SW_MYST=16;              //TODO もう一つの謎入力。要調査
+
 
 typedef enum{   //モードの列挙型。intで管理するより契約的
     xmas=0,     //Fu*k X'mas
@@ -196,7 +214,7 @@ void loop(){
             if(GRADATION_FLAG){
                 light.pwmUpdate(pwm_count,getGradationDuty());
             }else{
-            light.pwmUpdate(pwm_count);                     //pwm用に更新
+                light.pwmUpdate(pwm_count);                     //pwm用に更新
             }
         }
     }
