@@ -8,23 +8,18 @@ const byte OUT_MAX=13;              //出力ピンの一番上
 const byte SW_MODE=15;              //TODO モード切替スイッチのピン。15? 16?
 const byte SW_MYST=16;              //TODO もう一つの謎入力。要調査
 
-const byte PATTERN_XMAS=3;              //Pattern:パターン数
-const byte PATTERN_MOCHI=3;
-const byte PATTERN_ONI=3;
+const byte PATTERN=2;              //Pattern:パターン数
 
 //出力ピンのテーブルたち。定数だがポインタ参照がなぜかできないので、危ないけど変数
 //ここから下、お触り厳禁！！！！！
-bool XMAS[PATTERN_XMAS][12]={{LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW},
-                        {LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW},
-                        {LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW}};
+const bool XMAS[PATTERN][12]={{HIGH,HIGH,LOW,HIGH,LOW,LOW,HIGH,LOW,LOW,HIGH,LOW,LOW},
+                        {HIGH,LOW,HIGH,LOW,HIGH,LOW,HIGH,LOW,LOW,HIGH,LOW,LOW}};
 
-bool MOCHI[PATTERN_MOCHI][12]={{LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW},
-                        {LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW},
-                        {LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW}};
+const bool MOCHI[PATTERN][12]={{HIGH,HIGH,LOW,HIGH,LOW,LOW,LOW,LOW,HIGH,LOW,LOW,LOW},
+                        {HIGH,LOW,HIGH,LOW,HIGH,LOW,LOW,LOW,HIGH,LOW,LOW,LOW}};
 
-bool ONI[PATTERN_ONI][12]={{LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW},
-                        {LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW},
-                        {LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW}};
+const bool ONI[PATTERN][12]={{HIGH,HIGH,LOW,HIGH,LOW,HIGH,LOW,HIGH,LOW,LOW,LOW,LOW},
+                        {HIGH,LOW,HIGH,LOW,HIGH,HIGH,LOW,HIGH,LOW,LOW,LOW,LOW}};
 //お触り厳禁ここまで
 
 typedef enum{   //モードの列挙型。intで管理するより契約的
@@ -41,25 +36,23 @@ void resetSoftware(){       //処理を強制終了して再起動
 class Light{                    //点灯関係のclass
     private:                    //直接触れないようにprivateに
         Mode mode;              //Mode型。現在のモード
-        bool *flash_pins;    //点滅パターンでのピン光らせ方テーブル(ポインタ配列)
+        bool flash_pins[PATTERN][12];    //点滅パターンでのピン光らせ方テーブル(ポインタ配列)
         bool *out_status;       //出力データ。flash_pinsをそのままポインタ参照
         byte pattern_num;            //パターン数
 
     public:                     //外から触れるpublicメンバ
         Light(byte read_mode){      //コンストラクタ。モードを設定
             mode=(Mode)read_mode;   //この辺くさい。byteからModeがどうcastされるか...
+            pattern_num=PATTERN;
             switch(read_mode){
                 case xmas:
                     flash_pins=XMAS;
-                    pattern_num=PATTERN_XMAS;
                     break;
                 case mochi:
                     flash_pins=MOCHI;
-                    pattern_num=PATTERN_MOCHI;
                     break;
                 case oni:
                     flash_pins=ONI;
-                    pattern_num=PATTERN_ONI;
                     break;
                 default:            //Modeの内容に合致しなかったらxmasにして再起動
                     EEPROM.write(ADDR_MODE,(byte)xmas);
