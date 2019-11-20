@@ -21,134 +21,137 @@ void resetSoftware(){       //処理を強制終了して再起動
 
 //typedef float (*pinFunc)(float);
 
-//XMAS
-float xmas0(float phase){
-    return 0.0;
-}
-float xmas1(float phase){
-    return 0.0;
-}
-float xmas2(float phase){
-    return 0.0;
-}
-float xmas3(float phase){
-    return 0.0;
-}
-float xmas4(float phase){
-    return 0.0;
-}
-float xmas5(float phase){
-    return 0.0;
-}
-float xmas6(float phase){
-    return 0.0;
-}
-float xmas7(float phase){
-    return 0.0;
-}
-float xmas8(float phase){
-    return 0.0;
-}
-float xmas9(float phase){
-    return 0.0;
-}
-float xmas10(float phase){
-    return 0.0;
-}
-float xmas11(float phase){
-    return 0.0;
-}
-
-//Mochi
-float mochi0(float phase){
-    return 0.0;
-}
-float mochi1(float phase){
-    return 0.0;
-}
-float mochi2(float phase){
-    return 0.0;
-}
-float mochi3(float phase){
-    return 0.0;
-}
-float mochi4(float phase){
-    return 0.0;
-}
-float mochi5(float phase){
-    return 0.0;
-}
-float mochi6(float phase){
-    return 0.0;
-}
-float mochi7(float phase){
-    return 0.0;
-}
-float mochi8(float phase){
-    return 0.0;
-}
-float mochi9(float phase){
-    return 0.0;
-}
-float mochi10(float phase){
-    return 0.0;
-}
-float mochi11(float phase){
-    return 0.0;
+namespace Xmas{
+    float pin0(float phase){
+        return 0.0;
+    }
+    float pin1(float phase){
+        return 0.0;
+    }
+    float pin2(float phase){
+        return 0.0;
+    }
+    float pin3(float phase){
+        return 0.0;
+    }
+    float pin4(float phase){
+        return 0.0;
+    }
+    float pin5(float phase){
+        return 0.0;
+    }
+    float pin6(float phase){
+        return 0.0;
+    }
+    float pin7(float phase){
+        return 0.0;
+    }
+    float pin8(float phase){
+        return 0.0;
+    }
+    float pin9(float phase){
+        return 0.0;
+    }
+    float pin10(float phase){
+        return 0.0;
+    }
+    float pin11(float phase){
+        return 0.0;
+    }
+    float (*pinFunc[12])(float)={pin0,pin1,pin2,pin3,pin4,pin5,pin6,pin7,pin8,pin9,pin10,pin11};
 }
 
-//Oni
-float oni0(float phase){
-    return 0.0;
+namespace Mochi{
+    float pin0(float phase){
+        return 0.0;
+    }
+    float pin1(float phase){
+        return 0.0;
+    }
+    float pin2(float phase){
+        return 0.0;
+    }
+    float pin3(float phase){
+        return 0.0;
+    }
+    float pin4(float phase){
+        return 0.0;
+    }
+    float pin5(float phase){
+        return 0.0;
+    }
+    float pin6(float phase){
+        return 0.0;
+    }
+    float pin7(float phase){
+        return 0.0;
+    }
+    float pin8(float phase){
+        return 0.0;
+    }
+    float pin9(float phase){
+        return 0.0;
+    }
+    float pin10(float phase){
+        return 0.0;
+    }
+    float pin11(float phase){
+        return 0.0;
+    }
+    float (*pinFunc[12])(float)={pin0,pin1,pin2,pin3,pin4,pin5,pin6,pin7,pin8,pin9,pin10,pin11};
 }
-float oni1(float phase){
-    return 0.0;
-}
-float oni2(float phase){
-    return 0.0;
-}
-float oni3(float phase){
-    return 0.0;
-}
-float oni4(float phase){
-    return 0.0;
-}
-float oni5(float phase){
-    return 0.0;
-}
-float oni6(float phase){
-    return 0.0;
-}
-float oni7(float phase){
-    return 0.0;
-}
-float oni8(float phase){
-    return 0.0;
-}
-float oni9(float phase){
-    return 0.0;
-}
-float oni10(float phase){
-    return 0.0;
-}
-float oni11(float phase){
-    return 0.0;
+
+namespace Oni{
+    float pin0(float phase){
+        return 0.0;
+    }
+    float pin1(float phase){
+        return 0.0;
+    }
+    float pin2(float phase){
+        return 0.0;
+    }
+    float pin3(float phase){
+        return 0.0;
+    }
+    float pin4(float phase){
+        return 0.0;
+    }
+    float pin5(float phase){
+        return 0.0;
+    }
+    float pin6(float phase){
+        return 0.0;
+    }
+    float pin7(float phase){
+        return 0.0;
+    }
+    float pin8(float phase){
+        return 0.0;
+    }
+    float pin9(float phase){
+        return 0.0;
+    }
+    float pin10(float phase){
+        return 0.0;
+    }
+    float pin11(float phase){
+        return 0.0;
+    }
+    float (*pinFunc[12])(float)={pin0,pin1,pin2,pin3,pin4,pin5,pin6,pin7,pin8,pin9,pin10,pin11};
 }
 
 //
-float (*xmasFunc[12])(float)={xmas0,xmas1,xmas2,xmas3,xmas4,xmas5,xmas6,xmas7,xmas8,xmas9,xmas10,xmas11};
-float (*mochiFunc[12])(float)={mochi0,mochi1,mochi2,mochi3,mochi4,mochi5,mochi6,mochi7,mochi8,mochi9,mochi10,mochi11};
-float (*oniFunc[12])(float)={oni0,oni1,oni2,oni3,oni4,oni5,oni6,oni7,oni8,oni9,oni10,oni11};
 
 //float (*getFunc(Mode mode,byte pin_num))(float){
 float (*getFunc(Mode mode,byte pin_num))(float){
     switch(mode){
         case xmas:
-            return xmasFunc[pin_num];
+            return Xmas::pinFunc[pin_num];
         case mochi:
-            return mochiFunc[pin_num];
+            return Mochi::pinFunc[pin_num];
         case oni:
-            return oniFunc[pin_num];
+            return Oni::pinFunc[pin_num];
         default:
             return NULL;
     }
@@ -158,8 +161,11 @@ class Pin{
     private:
         float (*ratio)(float);
     public:
-        Pin(float (*f)(float)){
-            ratio=f;
+        /*Pin(float(*f)(float)){
+          ratio=f;
+          }*/
+        Pin(){
+            ratio=Xmas::pin0;
         }
 
         float getRatio(float phase){
@@ -169,16 +175,19 @@ class Pin{
 
 class Light{
     private:
+        Mode mode;
         Pin pins[12];
 
     public:
-        Light(Mode mode){
+        Light(Mode m){
+            mode=m;
             switch(mode){
                 case xmas:
                 case mochi:
                 case oni:
                     for(byte cnt=0;cnt<12;cnt++){
-                        pins[cnt]=Pin(getFunc(mode,cnt));
+                        //pins[cnt]=Pin(getFunc(mode,cnt));
+                        pins[cnt]=Pin();
                     }
                     break;
                 default:
@@ -196,12 +205,16 @@ class Light{
                 for(byte cnt=0;cnt<12;cnt++){
                     duty_pin=pins[cnt].getRatio(phase);
                     if(pwm_cnt>(byte)DUTY_RATIO*duty_pin){
-                        digitalWrite(pin+OUT_MIN,LOW);
+                        digitalWrite(cnt+OUT_MIN,LOW);
                     }else{
-                        digitalWrite(pin+OUT_MIN,HIGH);
+                        digitalWrite(cnt+OUT_MIN,HIGH);
                     }
                 }
             }
+        }
+
+        Mode getMode(){
+            return mode;
         }
 };
 
