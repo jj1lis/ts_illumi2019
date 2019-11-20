@@ -21,159 +21,138 @@ void resetSoftware(){       //処理を強制終了して再起動
 
 //typedef float (*pinFunc)(float);
 
-class Motion{
-    float pin0(float);
-    float pin1(float);
-    float pin2(float);
-    float pin3(float);
-    float pin4(float);
-    float pin5(float);
-    float pin6(float);
-    float pin7(float);
-    float pin8(float);
-    float pin9(float);
-    float pin10(float);
-    float pin11(float);
-};
+//XMAS
+float xmas0(float phase){
+    return 0.0;
+}
+float xmas1(float phase){
+    return 0.0;
+}
+float xmas2(float phase){
+    return 0.0;
+}
+float xmas3(float phase){
+    return 0.0;
+}
+float xmas4(float phase){
+    return 0.0;
+}
+float xmas5(float phase){
+    return 0.0;
+}
+float xmas6(float phase){
+    return 0.0;
+}
+float xmas7(float phase){
+    return 0.0;
+}
+float xmas8(float phase){
+    return 0.0;
+}
+float xmas9(float phase){
+    return 0.0;
+}
+float xmas10(float phase){
+    return 0.0;
+}
+float xmas11(float phase){
+    return 0.0;
+}
 
-class Xmas:Motion{
-public:
-        float pin0(float phase){
-            return 0.0;
-        }
-        static float pin1(float phase){
-            return 0.0;
-        }
-        float pin2(float phase){
-            return 0.0;
-        }
-        float pin3(float phase){
-            return 0.0;
-        }
-        float pin4(float phase){
-            return 0.0;
-        }
-        float pin5(float phase){
-            return 0.0;
-        }
-        float pin6(float phase){
-            return 0.0;
-        }
-        float pin7(float phase){
-            return 0.0;
-        }
-        float pin8(float phase){
-            return 0.0;
-        }
-        float pin9(float phase){
-            return 0.0;
-        }
-        float pin10(float phase){
-            return 0.0;
-        }
-        float pin11(float phase){
-            return 0.0;
-        }
-        
-        float(*)(float)[] xmasArray{
-            return {pin0,pin1,pin2,pin3,pin4,pin5,pin6,pin7,pin8,pin9,pin10,pin11};
-        }
-};
+//Mochi
+float mochi0(float phase){
+    return 0.0;
+}
+float mochi1(float phase){
+    return 0.0;
+}
+float mochi2(float phase){
+    return 0.0;
+}
+float mochi3(float phase){
+    return 0.0;
+}
+float mochi4(float phase){
+    return 0.0;
+}
+float mochi5(float phase){
+    return 0.0;
+}
+float mochi6(float phase){
+    return 0.0;
+}
+float mochi7(float phase){
+    return 0.0;
+}
+float mochi8(float phase){
+    return 0.0;
+}
+float mochi9(float phase){
+    return 0.0;
+}
+float mochi10(float phase){
+    return 0.0;
+}
+float mochi11(float phase){
+    return 0.0;
+}
 
-class Mochi:Motion{
-public:
-        float pin0(float phase){
-            return 0.0;
-        }
-        float pin1(float phase){
-            return 0.0;
-        }
-        float pin2(float phase){
-            return 0.0;
-        }
-        float pin3(float phase){
-            return 0.0;
-        }
-        float pin4(float phase){
-            return 0.0;
-        }
-        float pin5(float phase){
-            return 0.0;
-        }
-        float pin6(float phase){
-            return 0.0;
-        }
-        float pin7(float phase){
-            return 0.0;
-        }
-        float pin8(float phase){
-            return 0.0;
-        }
-        float pin9(float phase){
-            return 0.0;
-        }
-        float pin10(float phase){
-            return 0.0;
-        }
-        float pin11(float phase){
-            return 0.0;
-        }
-};
+//Oni
+float oni0(float phase){
+    return 0.0;
+}
+float oni1(float phase){
+    return 0.0;
+}
+float oni2(float phase){
+    return 0.0;
+}
+float oni3(float phase){
+    return 0.0;
+}
+float oni4(float phase){
+    return 0.0;
+}
+float oni5(float phase){
+    return 0.0;
+}
+float oni6(float phase){
+    return 0.0;
+}
+float oni7(float phase){
+    return 0.0;
+}
+float oni8(float phase){
+    return 0.0;
+}
+float oni9(float phase){
+    return 0.0;
+}
+float oni10(float phase){
+    return 0.0;
+}
+float oni11(float phase){
+    return 0.0;
+}
 
-class Oni:Motion{
-public:
-    float pin0(float phase){
-        return 0.0;
-    }
-    float pin1(float phase){
-        return 0.0;
-    }
-    float pin2(float phase){
-        return 0.0;
-    }
-    float pin3(float phase){
-        return 0.0;
-    }
-    float pin4(float phase){
-        return 0.0;
-    }
-    float pin5(float phase){
-        return 0.0;
-    }
-    float pin6(float phase){
-        return 0.0;
-    }
-    float pin7(float phase){
-        return 0.0;
-    }
-    float pin8(float phase){
-        return 0.0;
-    }
-    float pin9(float phase){
-        return 0.0;
-    }
-    float pin10(float phase){
-        return 0.0;
-    }
-    float pin11(float phase){
-        return 0.0;
-    }
-};
+//
+float (*xmasFunc[12])(float)={xmas0,xmas1,xmas2,xmas3,xmas4,xmas5,xmas6,xmas7,xmas8,xmas9,xmas10,xmas11};
+float (*mochiFunc[12])(float)={mochi0,mochi1,mochi2,mochi3,mochi4,mochi5,mochi6,mochi7,mochi8,mochi9,mochi10,mochi11};
+float (*oniFunc[12])(float)={oni0,oni1,oni2,oni3,oni4,oni5,oni6,oni7,oni8,oni9,oni10,oni11};
 
-/*
+//float (*getFunc(Mode mode,byte pin_num))(float){
 float (*getFunc(Mode mode,byte pin_num))(float){
     switch(mode){
         case xmas:
-            return Xmas::pin0;
+            return xmasFunc[pin_num];
         case mochi:
-            return Mochi::pin1;
+            return mochiFunc[pin_num];
         case oni:
-            return Oni::pin2;
+            return oniFunc[pin_num];
         default:
             return NULL;
     }
 }
-*/
 
 class Pin{
     private:
@@ -196,13 +175,10 @@ class Light{
         Light(Mode mode){
             switch(mode){
                 case xmas:
-                    for(byte cnt=0;cnt<12;cnt++){
-                        pins[cnt]=new Pin(Xmas::pin1);
-                    }
                 case mochi:
                 case oni:
                     for(byte cnt=0;cnt<12;cnt++){
-                        pins[cnt]=new Pin(getFunc(mode,cnt));
+                        pins[cnt]=Pin(getFunc(mode,cnt));
                     }
                     break;
                 default:
