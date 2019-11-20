@@ -136,14 +136,10 @@ float (*getFunc(Mode mode,byte pin_num))(float){
     }
 }
 
-struct Pin{
-        float (*ratio)(float);
-};
-
 class Light{
     private:
         Mode mode;
-        Pin pins[12];
+        float (*pins[12])(float);
 
     public:
         Light(Mode m){
@@ -153,8 +149,7 @@ class Light{
                 case mochi:
                 case oni:
                     for(byte cnt=0;cnt<12;cnt++){
-                        pins[cnt]=Pin();
-                        pins[cnt].ratio=getFunc(mode,cnt);
+                        pins[cnt]=getFunc(mode,cnt);
                     }
                     break;
                 default:
@@ -170,7 +165,7 @@ class Light{
                 }
             }else{
                 for(byte cnt=0;cnt<12;cnt++){
-                    duty_pin=pins[cnt].ratio(phase);
+                    duty_pin=pins[cnt](phase);
                     if(pwm_cnt>(byte)DUTY_RATIO*duty_pin){
                         digitalWrite(cnt+OUT_MIN,LOW);
                     }else{
@@ -207,7 +202,7 @@ void loop(){
             }
         }
 
-        phase_now=(millis()%FLASH_CYCLE)/FLASH_CYCLE*2*PI;
+        phase_now=(float)(millis()%FLASH_CYCLE)/(float)FLASH_CYCLE*2.*PI;
 
         for(byte pwm_count=0;pwm_count<=255;pwm_count++){
             light.pwmUpdate(pwm_count,phase_now);
