@@ -1,7 +1,7 @@
 #include <EEPROM.h>
 
 const int ADDR_MODE=0;              //EEPROMに書き込むモード用変数のアドレス
-const byte DUTY_RATIO=255;          //PWMのDuty比。0-255の間で設定
+const byte DUTY_RATIO=100;          //PWMのDuty比。0-255の間で設定
 const unsigned int FLASH_CYCLE=2000;//点滅周期(ミリ秒)
 const byte OUT_MIN=2;               //出力ピンの一番下
 const byte OUT_MAX=13;              //出力ピンの一番上
@@ -14,29 +14,25 @@ typedef enum{
     oni=2       //節分
 }Mode;
 
-void resetSoftware(){
-    asm volatile("jmp 0");
-}
-
-namespace Common{
+namespace Common{   //共通部分
     float pin0(float phase){
         return 1.;
     }
     float pin1(float phase){
-        return sin(phase);
+        return pow(sin(phrase),2)
     }
     float pin2(float phase){
-        return -sin(phase);
+        return pow(-sin(phrase),2)
     }
     float pin3(float phase){
-        return sin(phase);
+        return pow(sin(phrase),2)
     }
     float pin4(float phase){
-        return -sin(phase);
+        return pow(-sin(phrase),2)
     }
 }
 
-namespace Xmas{
+namespace Xmas{     //クリスマス
     float pin5(float phase){
         return 1.;
     }
@@ -60,7 +56,7 @@ namespace Xmas{
     }
 }
 
-namespace Mochi{
+namespace Mochi{    //正月
     float pin5(float phase){
         return 0.;
     }
@@ -84,7 +80,7 @@ namespace Mochi{
     }
 }
 
-namespace Oni{
+namespace Oni{      //節分
     float pin5(float phase){
         return 1.;
     }
@@ -134,6 +130,10 @@ float (*getFunc(Mode mode,byte pin_num))(float){
         default:
             return NULL;
     }
+}
+
+void resetSoftware(){
+    asm volatile("jmp 0");
 }
 
 class Light{
@@ -190,7 +190,7 @@ void setup(){
 
 void loop(){
     Light light((Mode)EEPROM.read(ADDR_MODE));
-    float phase_now;
+    float phase_now=0;
 
     while(1){
         if(digitalRead(SW_MODE)==HIGH){
