@@ -1,8 +1,9 @@
 #include <EEPROM.h>
 
 const int ADDR_MODE=0;              //EEPROMに書き込むモード用変数のアドレス
-const byte DUTY_RATIO=100;          //PWMのDuty比。0-255の間で設定
-const unsigned int FLASH_CYCLE=2000;//点滅周期(ミリ秒)
+const byte DUTY_MAX=100;            //PWMの周期。0より大きい範囲
+const byte DUTY_RATIO=50;          //PWMのDuty比。0-DUTY_MAXの間で設定
+const unsigned int FLASH_CYCLE=10000;//点滅周期(ミリ秒)
 const byte OUT_MIN=2;               //出力ピンの一番下
 const byte OUT_MAX=13;              //出力ピンの一番上
 const byte SW_MODE=15;              //モード切替スイッチのピン。15? 16?
@@ -15,35 +16,49 @@ typedef enum{
 }Mode;
 
 namespace Common{   //共通部分
-    float pin0(float phase){
+    float pin2(float phase){
         return 1.;
     }
-    float pin1(float phase){
-        return pow(sin(phrase),2)
-    }
-    float pin2(float phase){
-        return pow(-sin(phrase),2)
-    }
     float pin3(float phase){
-        return pow(sin(phrase),2)
+        //return pow(sin(phrase),2)
+        if(0<=phase&&phase<=PI){
+            return 1;
+        }else{
+            return 0;
+        }
     }
     float pin4(float phase){
-        return pow(-sin(phrase),2)
+        //return pow(-sin(phrase),2)
+        if(0<=phase&&phase<=PI){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+    float pin5(float phase){
+        //return pow(sin(phrase),2)
+        if(0<=phase&&phase<=PI){
+            return 0;
+        }else{
+            return 1;
+        }
+    }
+    float pin6(float phase){
+        //return pow(-sin(phrase),2)
+        if(0<=phase&&phase<=PI){
+            return 0;
+        }else{
+            return 1;
+        }
     }
 }
 
 namespace Xmas{     //クリスマス
-    float pin5(float phase){
-        return 1.;
-    }
-    float pin6(float phase){
-        return 1.;
-    }
     float pin7(float phase){
-        return 0.;
+        return 1.;
     }
     float pin8(float phase){
-        return 0.;
+        return 1.;
     }
     float pin9(float phase){
         return 0.;
@@ -52,43 +67,43 @@ namespace Xmas{     //クリスマス
         return 0.;
     }
     float pin11(float phase){
+        return 0.;
+    }
+    float pin12(float phase){
+        return 0.;
+    }
+    float pin13(float phase){
         return 0.;
     }
 }
 
 namespace Mochi{    //正月
-    float pin5(float phase){
-        return 0.;
-    }
-    float pin6(float phase){
-        return 0.;
-    }
     float pin7(float phase){
         return 0.;
     }
     float pin8(float phase){
-        return 1.;
+        return 0.;
     }
     float pin9(float phase){
         return 0.;
     }
     float pin10(float phase){
-        return 0.;
+        return 1.;
     }
     float pin11(float phase){
+        return 0.;
+    }
+    float pin12(float phase){
+        return 0.;
+    }
+    float pin13(float phase){
         return 0.;
     }
 }
 
 namespace Oni{      //節分
-    float pin5(float phase){
-        return 1.;
-    }
-    float pin6(float phase){
-        return 0.;
-    }
     float pin7(float phase){
-        return 0.;
+        return 1.;
     }
     float pin8(float phase){
         return 0.;
@@ -100,23 +115,29 @@ namespace Oni{      //節分
         return 0.;
     }
     float pin11(float phase){
+        return 0.;
+    }
+    float pin12(float phase){
+        return 0.;
+    }
+    float pin13(float phase){
         return 0.;
     }
 }
 
 namespace Xmas{
     using namespace Common;
-    float (*pinFunc[12])(float)={pin0,pin1,pin2,pin3,pin4,pin5,pin6,pin7,pin8,pin9,pin10,pin11};
+    float (*pinFunc[12])(float)={pin2,pin3,pin4,pin5,pin6,pin7,pin8,pin9,pin10,pin11,pin12,pin13};
 }
 
 namespace Mochi{
     using namespace Common;
-    float (*pinFunc[12])(float)={pin0,pin1,pin2,pin3,pin4,pin5,pin6,pin7,pin8,pin9,pin10,pin11};
+    float (*pinFunc[12])(float)={pin2,pin3,pin4,pin5,pin6,pin7,pin8,pin9,pin10,pin11,pin12,pin13};
 }
 
 namespace Oni{
     using namespace Common;
-    float (*pinFunc[12])(float)={pin0,pin1,pin2,pin3,pin4,pin5,pin6,pin7,pin8,pin9,pin10,pin11};
+    float (*pinFunc[12])(float)={pin2,pin3,pin4,pin5,pin6,pin7,pin8,pin9,pin10,pin11,pin12,pin13};
 }
 
 float (*getFunc(Mode mode,byte pin_num))(float){
@@ -133,6 +154,7 @@ float (*getFunc(Mode mode,byte pin_num))(float){
 }
 
 void resetSoftware(){
+    Serial.println("DEBUG:reset...");
     asm volatile("jmp 0");
 }
 
@@ -181,6 +203,7 @@ class Light{
 };
 
 void setup(){
+    Serial.begin(9600);
     for(int cnt=OUT_MIN; cnt<=OUT_MAX; cnt++){
         pinMode(cnt,OUTPUT);
     }
@@ -204,7 +227,7 @@ void loop(){
 
         phase_now=(float)(millis()%FLASH_CYCLE)/(float)FLASH_CYCLE*2.*PI;
 
-        for(byte pwm_count=0;pwm_count<=255;pwm_count++){
+        for(byte pwm_count=0;pwm_count<=DUTY_MAX;pwm_count++){
             light.pwmUpdate(pwm_count,phase_now);
         }
     }
